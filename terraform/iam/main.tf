@@ -10,12 +10,12 @@ data "aws_iam_policy_document" "lambda_assume_role" {
   }
 }
 
-resource "aws_iam_role" "deployment_gate" {
-  name               = "gaterkeeper-deployment-gate-role"
+resource "aws_iam_role" "this" {
+  name               = var.role_name
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 }
 
-resource "aws_iam_role_policy_attachment" "deployment_gate_basic_execution" {
-  role       = aws_iam_role.deployment_gate.name
+resource "aws_iam_role_policy_attachment" "basic_execution" {
+  role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }

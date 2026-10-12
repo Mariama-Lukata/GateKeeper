@@ -1,14 +1,18 @@
-data "archive_file" "deployment_gate" {
-  type        = "zip"
-  source_dir  = "${path.module}/../lambda/deployment_gate"
-  output_path = "${path.module}/builds/deployment_gate.zip"
+module "vpc" {
+  source       = "./vpc"
+  vpc_cidr     = var.vpc_cidr
+  subnet_cidrs = var.subnet_cidrs
+  name_prefix  = var.name_prefix
 }
 
-resource "aws_lambda_function" "deployment_gate" {
-  function_name    = "gaterkeeper-deployment-gate"
-  filename         = data.archive_file.deployment_gate.output_path
-  source_code_hash = data.archive_file.deployment_gate.output_base64sha256
-  handler          = "handler.handler"
-  runtime          = "python3.12"
-  role             = aws_iam_role.deployment_gate.arn
+module "iam" {
+  source    = "./iam"
+  role_name = var.role_name
+}
+
+module "lambda" {
+  source        = "./lambda"
+  function_name = var.function_name
+  source_dir    = "${path.module}/../lambda/deployment_gate"
+  role_arn      = module.iam.role_arn
 }

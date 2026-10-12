@@ -1,0 +1,33 @@
+name: Deploy GaterKeeper
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - "lambda/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::944401276040:role/gaterkeeper-github-actions
+          aws-region: us-east-1
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: terraform apply -auto-approve
