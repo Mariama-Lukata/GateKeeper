@@ -12,7 +12,8 @@ module "iam" {
 
 module "lambda" {
   source        = "./lambda"
-  function_name = var.function_name
+  function_name = "gaterkeeper-deployment-gate"
   source_dir    = "${path.module}/../lambda/deployment_gate"
   role_arn      = module.iam.role_arn
+  alert_email   = var.alert_email
 }

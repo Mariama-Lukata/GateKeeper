@@ -19,3 +19,7 @@ variable "runtime" {
 variable "role_arn" {
   type = string
 }
+
+variable "alert_email" {
+  type = string
+}
